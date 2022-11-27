@@ -28,6 +28,8 @@
 #include "services/gap/ble_svc_gap.h"
 #include "bleprph.h"
 
+#include "led_task.h"
+
 #if CONFIG_EXAMPLE_EXTENDED_ADV
 static uint8_t ext_adv_pattern_1[] = {
     0x02, 0x01, 0x06,
@@ -481,7 +483,7 @@ app_main(void)
     assert(rc == 0);
 
     /* Set the default device name. */
-    rc = ble_svc_gap_device_name_set("nimble-bleprph");
+    rc = ble_svc_gap_device_name_set("TSDZ2 Controller");
     assert(rc == 0);
 
     /* XXX Need to have template for store */
@@ -494,4 +496,12 @@ app_main(void)
     if (rc != ESP_OK) {
         ESP_LOGE(tag, "scli_init() failed");
     }
+
+    // Low-priority rainbow LED task
+    xTaskCreate(runLedTask,
+                "Rainbow LED",
+                2048, // words, not bytes
+                NULL,
+                1,
+                NULL);
 }
